@@ -1,5 +1,4 @@
 {
-    "python.linting.enabled": true,
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.diagnosticSeverityOverrides": {
@@ -14,5 +13,6 @@
     ],
     "python.analysis.extraPaths": [
         ".vscode\\Pico-W-Stub\\stubs"
-    ]
+    ],  
+    "python.missingPackage.severity":  "Information",
 }
