@@ -17,11 +17,13 @@ class Stopwatch:
 
     def start(self):
         if not self.is_running:
+            print("Starting stopwatch")
             self.start_time = time.ticks_ms()
             self.is_running = True
 
     def stop(self):
         if self.is_running:
+            print("Stopping stopwatch")
             self.elapsed_time = self.elapsed_time + time.ticks_diff(time.ticks_ms(), self.start_time)
             self.is_running = False
 
@@ -104,17 +106,43 @@ if __name__=='__main__':
 
     # Initialize the elapsed time
     minutes = 0
+    buttonStatusLastCheck = [1,1,1,1]   # 1 = not pressed, 0 = pressed
+
+    # Check for button presses
+    def check_key_press(key, index):
+        if key.value() == 0:
+            if buttonStatusLastCheck[index] == 1:
+                buttonStatusLastCheck[index] = 0
+                print(f"Key {index} pressed")
+                if index == 0:
+                    stopwatch.start()
+                elif index == 1:
+                    stopwatch.stop()
+                elif index == 2:
+                    stopwatch.reset()
+                elif index == 3:
+                    pass
+        elif key.value() == 1:
+            if buttonStatusLastCheck[index] == 0:
+                buttonStatusLastCheck[index] = 1
+                print(f"Key {index} released")
 
     # Main loop
     while minutes < 1:
-
         # Check for button presses
-        if key0.value() == 0:
-            stopwatch.start()
-        if key1.value() == 0:
-            stopwatch.stop()
-        if key2.value() == 0:
-            stopwatch.reset()
+        check_key_press(key0, 0)
+        check_key_press(key1, 1)
+        check_key_press(key2, 2)
+        check_key_press(key3, 3)
+
+        # if key0.value() == 1 and key1.value() == 1 and key2.value() == 1 and key3.value() == 1:
+        #     buttonStatusLastCheck = [1,1,1,1]
+
+        # Calculate and format elapsed time
+        elapsed = stopwatch.get_elapsed_time() // 1000  # Convert to seconds
+        minutes = elapsed // 60
+        seconds = elapsed % 60
+        time_str = f"{minutes:02}:{seconds:02}"
 
         # Calculate and format elapsed time
         elapsed = stopwatch.get_elapsed_time() // 1000  # Convert to seconds
