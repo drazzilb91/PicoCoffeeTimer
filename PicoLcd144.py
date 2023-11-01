@@ -189,3 +189,5 @@ class LCD_1inch44(framebuf.FrameBuffer):
             self.write_data(0xA0) # Landscape (270 degrees)
         else:
             raise ValueError('Angle must be 0, 1, 2 or 3')
+
+

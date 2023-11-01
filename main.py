@@ -31,15 +31,35 @@ def draw_string(lcd_fb, x, y, string, color):
     for i, char in enumerate(string):
         draw_char(lcd_fb, x + i * 18, y, char, color)  # 18 is the character width including space
 
+def screen_off_mode():
+  LCD.fill(LCD.BLACK)
+  LCD.show()
+  while key0.value() == 1:
+    print("screen off")
+    idle()
+
+  print("done sleeping")
+
 
 def sleepMode():
   key0 = Pin(15,Pin.IN,Pin.PULL_UP)
   while key0.value() == 1:
     print("sleeping")
+    time.sleep(1)
     idle()
-    # lightsleep(10000)
-    deepsleep(10000)
+    print("lightsleep")
+    time.sleep(1)
+    lightsleep(1000)
+    LCD.text("We are back", 20, 10, LCD.WHITE)
+    LCD.show()
+    time.sleep(1)
+    print("Now deepsleep")
+    # deepsleep(10000)
   print("done sleeping")
+  pwm = PWM(Pin(BL))
+  pwm.freq(1000)
+  pwm.duty_u16(32768)#max 65535
+  LCD.init_display()
 
 class Stopwatch:
     def __init__(self):
@@ -174,13 +194,18 @@ if __name__=='__main__':
   # Initialize the display
   splashScreen()
 
+  print("Lets try turningi it off")
+  pwm.deinit()
+  # LCD.screen_off()
+
   stopwatchMode()
 
-  print("Going to sleep now")
+  print("Main: Going to sleep now")
   LCD.fill(LCD.BLACK)
   LCD.text("Shutting Down", 20, 10, LCD.WHITE)
   LCD.show()
   LCD.fill(LCD.BLACK)
   LCD.show()
-
-  sleepMode()
+  screen_off_mode()
+  time.sleep(1)
+  # sleepMode()
