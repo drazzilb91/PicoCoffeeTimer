@@ -27,13 +27,15 @@ class LCD_1inch44(framebuf.FrameBuffer):
         super().__init__(self.buffer, self.width, self.height, framebuf.RGB565)
         self.init_display()
 
-        self.WHITE  =   0xFFFF
-        self.BLACK  =  0x0000
-        self.GREEN  =  0x001F
-        self.RED    =  0xF800
-        self.BLUE   = 0x07E0
-        self.GBLUE = 0X07FF
-        self.YELLOW = 0xFFE0
+        self.WHITE  = 0xFFFF # Correct
+        self.BLACK  = 0x0000 # Correct
+        self.GREEN  = 0x001F # Correct
+        self.RED    = 0xF800 # Correct
+        self.BLUE   = 0x07E0 # Correct
+        self.YELLOW = 0xF81F # Correct
+        self.MAGENTA = 0xFFE0
+        self.CYAN   = 0x07FF
+        self.GBLUE  = 0xFF07
 
     def write_cmd(self, cmd):
         self.cs(1)
@@ -55,8 +57,10 @@ class LCD_1inch44(framebuf.FrameBuffer):
         self.rst(0)
         self.rst(1)
 
-        self.write_cmd(0x36)
-        self.write_data(0x70)
+        # Set initial rotation
+        self.set_rotation(0)
+        # self.write_cmd(0x36)
+        # self.write_data(0x00)
 
         self.write_cmd(0x3A)
         self.write_data(0x05)
@@ -172,3 +176,16 @@ class LCD_1inch44(framebuf.FrameBuffer):
         self.cs(0)
         self.spi.write(self.buffer)
         self.cs(1)
+
+    def set_rotation(self, angle):
+        self.write_cmd(0x36)
+        if angle == 0:
+            self.write_data(0x00) # Portrait (0 degrees)
+        elif angle == 1:
+            self.write_data(0xC0) # Portrait (180 degrees)
+        elif angle == 2:
+            self.write_data(0x70) # Landscape (90 degrees)
+        elif angle == 3:
+            self.write_data(0xA0) # Landscape (270 degrees)
+        else:
+            raise ValueError('Angle must be 0, 1, 2 or 3')

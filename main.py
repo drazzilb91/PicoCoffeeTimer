@@ -47,13 +47,14 @@ class Stopwatch:
         return self.elapsed_time
 
 def splashScreen():
-    #color BRG
+  #color order is BGR
   LCD.fill(LCD.BLACK)
+
 
   LCD.show()
 
-  LCD.fill_rect(15,40,75,12,LCD.YELLOW)
-  LCD.rect(15,40,75,12,LCD.YELLOW)
+  LCD.fill_rect(15,40,75,12,LCD.CYAN)
+  LCD.rect(15,40,75,12,LCD.CYAN)
   LCD.text("Offside ",17,42,LCD.WHITE)
 
   LCD.fill_rect(15,60,75,12,LCD.BLUE)
@@ -79,6 +80,7 @@ def stopwatchMode():
   # Initialize the elapsed time
   minutes = 0
 
+  temp_num = 0
   # Main loop
   while minutes < 1:
 
@@ -89,6 +91,12 @@ def stopwatchMode():
           stopwatch.stop()
       if key2.value() == 0:
           stopwatch.reset()
+      if key3.value() == 0:
+          LCD.set_rotation(temp_num)
+          if temp_num == 3:
+            temp_num = 0
+          else:
+            temp_num = temp_num + 1
 
       # Calculate and format elapsed time
       elapsed = stopwatch.get_elapsed_time() // 1000  # Convert to seconds
@@ -99,7 +107,6 @@ def stopwatchMode():
       # Clear the display and show the elapsed time
       LCD.fill(LCD.BLACK)
       LCD.text("Coffee Timer", 20, 10, LCD.WHITE)
-
 
       if elapsed < 20:
         bgcolor = LCD.RED
@@ -116,15 +123,19 @@ def stopwatchMode():
       else:
         bgcolor = LCD.BLACK
       # print(bgcolor)
+
+      if bgcolor == LCD.YELLOW:
+        text_color = LCD.BLACK
+      else:
+        text_color = LCD.WHITE
+
       LCD.fill_rect(5,25,120,80,bgcolor)
       LCD.rect(5,25,120,80,bgcolor)
       # LCD.text(time_str, 52, 52, LCD.GREEN)
-      LCD.text(time_str,45,62,LCD.WHITE)
-      
+      LCD.text(time_str,45,62,text_color)
 
       LCD.show()
       time.sleep(0.01)  # Update the display every 100 milliseconds
-
 
 if __name__=='__main__':
   pwm = PWM(Pin(BL))
