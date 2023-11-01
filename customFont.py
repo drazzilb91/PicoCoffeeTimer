@@ -321,7 +321,7 @@ byte_data_colon = [
 	0x00, 0x00, 0x00, #
 ]
 
-def monochrome_to_rgb565(byte_data, width, height, color, invert=True):
+def monochrome_to_rgb565(byte_data, width, height, color, invert=False):
     # Create a new bytearray with the size of the image in RGB565 format
     buffer = bytearray(width * height * 2)
     fb_mono = framebuf.FrameBuffer(bytearray(byte_data), width, height, framebuf.MONO_HLSB)
@@ -331,11 +331,11 @@ def monochrome_to_rgb565(byte_data, width, height, color, invert=True):
     for y in range(height):
         for x in range(width):
             pixel = fb_mono.pixel(x, y)
+            # fb_rgb.pixel(x, y, color if pixel else 0)
             if not invert:
                 fb_rgb.pixel(x, y, color if pixel else 0)
             else:
                 fb_rgb.pixel(x, y, color if not pixel else 0)
-
 
 
     return fb_rgb
@@ -349,7 +349,7 @@ def bitmap_to_framebuffer(byte_data, width, height):
 
 # Define the color for the text
 TEXT_COLOR = 0xFFFF  # White in RGB565 format
-# TEXT_COLOR = 0x0000  # Black in RGB565 format
+TEXT_COLOR_DARK = 0x0000  # Black in RGB565 format
 
 
 # Define the bitmaps as FrameBuffer objects
@@ -366,6 +366,21 @@ bitmaps = {
     '9': monochrome_to_rgb565(byte_data_9, 17, 24, TEXT_COLOR),  # Width and height of the character '9'
     ':': monochrome_to_rgb565(byte_data_colon, 17, 24, TEXT_COLOR),  # Width and height of the character ':'
 }
+
+# Dark Bitmaps
+bitmaps_dark = {
+      '0': monochrome_to_rgb565(byte_data, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '0'
+    '1': monochrome_to_rgb565(byte_data_1, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '1'
+    '2': monochrome_to_rgb565(byte_data_2, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '2'
+    '3': monochrome_to_rgb565(byte_data_3, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '3'
+    '4': monochrome_to_rgb565(byte_data_4, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '4'
+    '5': monochrome_to_rgb565(byte_data_5, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '5'
+    '6': monochrome_to_rgb565(byte_data_6, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '6'
+    '7': monochrome_to_rgb565(byte_data_7, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '7'
+    '8': monochrome_to_rgb565(byte_data_8, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '8'
+    '9': monochrome_to_rgb565(byte_data_9, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '9'
+    ':': monochrome_to_rgb565(byte_data_colon, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character ':'
+}  
 
 # # Define the bitmaps for each character
 # bitmaps = {

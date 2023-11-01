@@ -1,7 +1,7 @@
 import time
 from machine import Pin, SPI, PWM,lightsleep, idle, deepsleep
 from PicoLcd144 import LCD_1inch44
-from customFont import bitmaps
+from customFont import bitmaps, bitmaps_dark
 
 BL = 13
 DC = 8
@@ -14,10 +14,15 @@ LCD = LCD_1inch44()
 
 # Function to draw a character on the LCD framebuffer
 def draw_char(lcd_fb, x, y, char, color):
-    char_fb = bitmaps[char]
+    if color == LCD.WHITE:
+        char_fb = bitmaps[char] 
+    else:
+        char_fb = bitmaps_dark[char]
+
     # Use the blit method to draw the character framebuffer onto the LCD framebuffer
     # print("Is LCD.WHITE?" + str( color == LCD.WHITE))
-    lcd_fb.blit(char_fb, x, y, LCD.WHITE)
+    # lcd_fb.blit(char_fb, x, y, LCD.WHITE if color == LCD.BLACK else LCD.BLACK)
+    lcd_fb.blit(char_fb, x, y, LCD.BLACK)
 
 # Function to draw a string on the LCD framebuffer
 def draw_string(lcd_fb, x, y, string, color):
@@ -141,6 +146,7 @@ def stopwatchMode():
 
       if bgcolor == LCD.YELLOW:
         text_color = LCD.BLACK
+
       else:
         text_color = LCD.WHITE
 
