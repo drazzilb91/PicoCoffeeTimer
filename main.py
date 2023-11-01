@@ -1,6 +1,7 @@
 import time
 from machine import Pin, SPI, PWM,lightsleep, idle, deepsleep
 from PicoLcd144 import LCD_1inch44
+from customFont import bitmaps
 
 BL = 13
 DC = 8
@@ -10,6 +11,19 @@ SCK = 10
 CS = 9
 
 LCD = LCD_1inch44()
+
+# Function to draw a character on the LCD framebuffer
+def draw_char(lcd_fb, x, y, char, color):
+    char_fb = bitmaps[char]
+    # Use the blit method to draw the character framebuffer onto the LCD framebuffer
+    # print("Is LCD.WHITE?" + str( color == LCD.WHITE))
+    lcd_fb.blit(char_fb, x, y, LCD.WHITE)
+
+# Function to draw a string on the LCD framebuffer
+def draw_string(lcd_fb, x, y, string, color):
+    for i, char in enumerate(string):
+        draw_char(lcd_fb, x + i * 18, y, char, color)  # 18 is the character width including space
+
 
 def sleepMode():
   key0 = Pin(15,Pin.IN,Pin.PULL_UP)
@@ -73,6 +87,7 @@ def splashScreen():
   LCD.show()
   time.sleep(2)
 
+
 def stopwatchMode():
    # Initialize the stopwatch
   stopwatch = Stopwatch()
@@ -132,7 +147,8 @@ def stopwatchMode():
       LCD.fill_rect(5,25,120,80,bgcolor)
       LCD.rect(5,25,120,80,bgcolor)
       # LCD.text(time_str, 52, 52, LCD.GREEN)
-      LCD.text(time_str,45,62,text_color)
+      # LCD.text(time_str,45,62,text_color)
+      draw_string(LCD,21, 53, time_str, text_color)
 
       LCD.show()
       time.sleep(0.01)  # Update the display every 100 milliseconds
