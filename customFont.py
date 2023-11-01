@@ -327,13 +327,15 @@ def monochrome_to_rgb565(byte_data, width, height, color, invert=False):
     fb_mono = framebuf.FrameBuffer(bytearray(byte_data), width, height, framebuf.MONO_HLSB)
     fb_rgb = framebuf.FrameBuffer(buffer, width, height, framebuf.RGB565)
     
+    bg_color = TEXT_COLOR_DARK if color == TEXT_COLOR else TEXT_COLOR
+
     # Convert the monochrome data to RGB565 data
     for y in range(height):
         for x in range(width):
             pixel = fb_mono.pixel(x, y)
             # fb_rgb.pixel(x, y, color if pixel else 0)
             if not invert:
-                fb_rgb.pixel(x, y, color if pixel else 0)
+                fb_rgb.pixel(x, y, color if pixel else bg_color)
             else:
                 fb_rgb.pixel(x, y, color if not pixel else 0)
 
@@ -369,7 +371,7 @@ bitmaps = {
 
 # Dark Bitmaps
 bitmaps_dark = {
-      '0': monochrome_to_rgb565(byte_data, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '0'
+	'0': monochrome_to_rgb565(byte_data, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '0'
     '1': monochrome_to_rgb565(byte_data_1, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '1'
     '2': monochrome_to_rgb565(byte_data_2, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '2'
     '3': monochrome_to_rgb565(byte_data_3, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '3'

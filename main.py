@@ -16,13 +16,15 @@ LCD = LCD_1inch44()
 def draw_char(lcd_fb, x, y, char, color):
     if color == LCD.WHITE:
         char_fb = bitmaps[char] 
+        lcd_fb.blit(char_fb, x, y, LCD.BLACK)
     else:
         char_fb = bitmaps_dark[char]
+        lcd_fb.blit(char_fb, x, y, LCD.WHITE)
 
     # Use the blit method to draw the character framebuffer onto the LCD framebuffer
     # print("Is LCD.WHITE?" + str( color == LCD.WHITE))
     # lcd_fb.blit(char_fb, x, y, LCD.WHITE if color == LCD.BLACK else LCD.BLACK)
-    lcd_fb.blit(char_fb, x, y, LCD.BLACK)
+    # lcd_fb.blit(char_fb, x, y, LCD.BLACK)
 
 # Function to draw a string on the LCD framebuffer
 def draw_string(lcd_fb, x, y, string, color):
