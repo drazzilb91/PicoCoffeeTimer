@@ -11,6 +11,10 @@ SCK = 10
 CS = 9
 
 LCD = LCD_1inch44()
+key0 = Pin(15,Pin.IN,Pin.PULL_UP)
+key1 = Pin(17,Pin.IN,Pin.PULL_UP)
+key2 = Pin(2 ,Pin.IN,Pin.PULL_UP)
+key3 = Pin(3 ,Pin.IN,Pin.PULL_UP)
 
 # Function to draw a character on the LCD framebuffer
 def draw_char(lcd_fb, x, y, char, color):
@@ -42,25 +46,47 @@ def screen_off_mode():
 
 
 def sleepMode():
-  key0 = Pin(15,Pin.IN,Pin.PULL_UP)
+  # key0 = Pin(15,Pin.IN,Pin.PULL_UP)
+  global awake_flag 
+  awake_flag = False
+
+  # Define the interrupt handler
+  def button_handler(pin):
+      print("Button pressed!")
+      global awake_flag
+      awake_flag = True
+
+  # Attach the interrupt handler to the button pin
+  key0.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+  key1.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+  key2.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+  key3.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+
+  # Turn off the LCD display
   LCD.display_off()
-  while key0.value() == 1:
-    print("sleeping")
-    time.sleep(1)
+
+  # Turn off the backlight
+  pwm = PWM(Pin(BL))
+  pwm.freq(1000)
+  pwm.duty_u16(0)#max 65535
+
+  # while key0.value() == 1 and key1.value() == 1 and key2.value() == 1 and key3.value() == 1 and awake_flag == False:
+  while awake_flag is False:
+    # print("sleeping")
     idle()
-    print("lightsleep")
-    time.sleep(1)
-    lightsleep(1000)
-    LCD.text("We are back", 20, 10, LCD.WHITE)
-    LCD.show()
-    time.sleep(1)
-    print("Now deepsleep")
-    # deepsleep(10000)
+    # print("done idle")
+
+
+
   print("done sleeping")
+
+  # Turn on the backlight
   pwm = PWM(Pin(BL))
   pwm.freq(1000)
   pwm.duty_u16(32768)#max 65535
-  LCD.init_display()
+
+  # Turn on the LCD display
+  LCD.display_on()
 
 class Stopwatch:
     def __init__(self):
@@ -122,10 +148,12 @@ def stopwatchMode():
 
   # Initialize the elapsed time
   minutes = 0
+  seconds = 0
 
   temp_num = 0
   # Main loop
-  while minutes < 1:
+  # while minutes < 1:
+  while seconds < 10:
 
       # Check for button presses
       if key0.value() == 0:
@@ -207,18 +235,9 @@ if __name__=='__main__':
   # Initialize the display
   splashScreen()
 
-  print("Lets try turningi it off")
-  pwm.deinit()
-  # LCD.screen_off()
+  while not (key0.value() == 0 and key3.value() == 0):
+    print("Main: Switching to stopwatch mode")
+    stopwatchMode()
 
-  stopwatchMode()
-
-  print("Main: Going to sleep now")
-  LCD.fill(LCD.BLACK)
-  LCD.text("Shutting Down", 20, 10, LCD.WHITE)
-  LCD.show()
-  LCD.fill(LCD.BLACK)
-  LCD.show()
-  screen_off_mode()
-  time.sleep(1)
-  # sleepMode()
+    print("Main: Switching to sleep mode")
+    sleepMode()
