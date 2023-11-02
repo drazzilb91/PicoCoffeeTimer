@@ -4,7 +4,7 @@ It contains functions for drawing characters and strings on the LCD framebuffer,
 The main function initializes the display, shows a splash screen, and switches between stopwatch and sleep modes based on button presses.
 """
 import time
-from machine import Pin, SPI, PWM, idle
+from machine import Pin, PWM, idle
 from PicoLcd144 import LCD_1inch44
 from customFont import bitmaps, bitmaps_dark
 
@@ -18,6 +18,10 @@ CS = 9
 
 # Create a new LCD instance
 LCD = LCD_1inch44()
+
+# global SCREEN_ROTATION_SETTING
+SCREEN_ROTATION_SETTING = 3
+LCD.set_rotation(SCREEN_ROTATION_SETTING)
 
 # Define the button pins
 key0 = Pin(15,Pin.IN,Pin.PULL_UP)
@@ -144,10 +148,11 @@ def stopwatchMode():
   minutes = 0
   seconds = 0
 
-  temp_num = 0
+  global SCREEN_ROTATION_SETTING
+  # SCREEN_ROTATION_SETTING = 3
   # Main loop
-  # while minutes < 1:
-  while seconds < 10:
+  while minutes < 1:
+  # while seconds < 10:
 
       # Check for button presses
       if key0.value() == 0:
@@ -157,11 +162,11 @@ def stopwatchMode():
       if key2.value() == 0:
           stopwatch.reset()
       if key3.value() == 0:
-          LCD.set_rotation(temp_num)
-          if temp_num == 3:
-            temp_num = 0
+          LCD.set_rotation(SCREEN_ROTATION_SETTING)
+          if SCREEN_ROTATION_SETTING == 3:
+            SCREEN_ROTATION_SETTING = 0
           else:
-            temp_num = temp_num + 1
+            SCREEN_ROTATION_SETTING = SCREEN_ROTATION_SETTING + 1
 
       # Calculate and format elapsed time
       elapsed = stopwatch.get_elapsed_time() // 1000  # Convert to seconds
