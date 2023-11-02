@@ -43,6 +43,7 @@ def screen_off_mode():
 
 def sleepMode():
   key0 = Pin(15,Pin.IN,Pin.PULL_UP)
+  LCD.display_off()
   while key0.value() == 1:
     print("sleeping")
     time.sleep(1)
@@ -179,12 +180,24 @@ def stopwatchMode():
       draw_string(LCD,21, 53, time_str, text_color)
 
       LCD.show()
-      time.sleep(0.01)  # Update the display every 100 milliseconds
+      time.sleep(0.1)  # Update the display every 100 milliseconds
 
 if __name__=='__main__':
+  # print("done init")
+
+  # time.sleep(2)
+
   pwm = PWM(Pin(BL))
   pwm.freq(1000)
   pwm.duty_u16(32768)#max 65535
+
+  # print("done pwm")
+  # pwm.duty_u16(0)#max 65535
+
+  time.sleep(2)
+  #Turn off the LCD display
+  # print("turning off display")
+  # LCD.write_cmd(0x28)
 
   key0 = Pin(15,Pin.IN,Pin.PULL_UP)
   key1 = Pin(17,Pin.IN,Pin.PULL_UP)

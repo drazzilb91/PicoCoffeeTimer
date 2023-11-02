@@ -156,6 +156,7 @@ class LCD_1inch44(framebuf.FrameBuffer):
         #Turn on the LCD display
         self.write_cmd(0x29)
 
+
     def show(self):
         self.write_cmd(0x2A)
         self.write_data(0x00)
@@ -190,4 +191,8 @@ class LCD_1inch44(framebuf.FrameBuffer):
         else:
             raise ValueError('Angle must be 0, 1, 2 or 3')
 
+    def display_off(self):
+        self.write_cmd(0x28)
 
+    def display_on(self):
+        self.write_cmd(0x29)
