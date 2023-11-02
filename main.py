@@ -1,8 +1,14 @@
+"""
+This script is for a coffee timer project using a Raspberry Pi Pico and a 1.44 inch LCD display.
+It contains functions for drawing characters and strings on the LCD framebuffer, as well as a stopwatch class.
+The main function initializes the display, shows a splash screen, and switches between stopwatch and sleep modes based on button presses.
+"""
 import time
-from machine import Pin, SPI, PWM,lightsleep, idle, deepsleep
+from machine import Pin, SPI, PWM, idle
 from PicoLcd144 import LCD_1inch44
 from customFont import bitmaps, bitmaps_dark
 
+# Define the SPI pins
 BL = 13
 DC = 8
 RST = 12
@@ -10,11 +16,26 @@ MOSI = 11
 SCK = 10
 CS = 9
 
+# Create a new LCD instance
 LCD = LCD_1inch44()
+
+# Define the button pins
 key0 = Pin(15,Pin.IN,Pin.PULL_UP)
 key1 = Pin(17,Pin.IN,Pin.PULL_UP)
 key2 = Pin(2 ,Pin.IN,Pin.PULL_UP)
 key3 = Pin(3 ,Pin.IN,Pin.PULL_UP)
+
+# Define the interrupt handler
+def button_handler(pin):
+    print("Button pressed!")
+    global awake_flag
+    awake_flag = True
+
+# Attach the interrupt handler to the button pin
+key0.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+key1.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+key2.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
+key3.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
 
 # Function to draw a character on the LCD framebuffer
 def draw_char(lcd_fb, x, y, char, color):
@@ -35,32 +56,10 @@ def draw_string(lcd_fb, x, y, string, color):
     for i, char in enumerate(string):
         draw_char(lcd_fb, x + i * 18, y, char, color)  # 18 is the character width including space
 
-def screen_off_mode():
-  LCD.fill(LCD.BLACK)
-  LCD.show()
-  while key0.value() == 1:
-    print("screen off")
-    idle()
-
-  print("done sleeping")
-
-
+# Function to manage the sleep mode
 def sleepMode():
-  # key0 = Pin(15,Pin.IN,Pin.PULL_UP)
   global awake_flag 
   awake_flag = False
-
-  # Define the interrupt handler
-  def button_handler(pin):
-      print("Button pressed!")
-      global awake_flag
-      awake_flag = True
-
-  # Attach the interrupt handler to the button pin
-  key0.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
-  key1.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
-  key2.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
-  key3.irq(trigger=Pin.IRQ_FALLING, handler=button_handler)
 
   # Turn off the LCD display
   LCD.display_off()
@@ -70,13 +69,8 @@ def sleepMode():
   pwm.freq(1000)
   pwm.duty_u16(0)#max 65535
 
-  # while key0.value() == 1 and key1.value() == 1 and key2.value() == 1 and key3.value() == 1 and awake_flag == False:
   while awake_flag is False:
-    # print("sleeping")
     idle()
-    # print("done idle")
-
-
 
   print("done sleeping")
 
@@ -211,30 +205,15 @@ def stopwatchMode():
       time.sleep(0.1)  # Update the display every 100 milliseconds
 
 if __name__=='__main__':
-  # print("done init")
-
-  # time.sleep(2)
-
+  # Turn on the backlight
   pwm = PWM(Pin(BL))
   pwm.freq(1000)
   pwm.duty_u16(32768)#max 65535
 
-  # print("done pwm")
-  # pwm.duty_u16(0)#max 65535
-
-  time.sleep(2)
-  #Turn off the LCD display
-  # print("turning off display")
-  # LCD.write_cmd(0x28)
-
-  key0 = Pin(15,Pin.IN,Pin.PULL_UP)
-  key1 = Pin(17,Pin.IN,Pin.PULL_UP)
-  key2 = Pin(2 ,Pin.IN,Pin.PULL_UP)
-  key3 = Pin(3 ,Pin.IN,Pin.PULL_UP)
-
   # Initialize the display
   splashScreen()
 
+  # Last-ditch attempt to escape the program by pressing buttons 0 and 3 simultaneously
   while not (key0.value() == 0 and key3.value() == 0):
     print("Main: Switching to stopwatch mode")
     stopwatchMode()
