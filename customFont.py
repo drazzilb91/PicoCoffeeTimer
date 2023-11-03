@@ -1,4 +1,9 @@
-# My Custom Font
+
+"""
+This module defines the byte data for the characters '0' to '9' and ':' in a 17x24 monochrome format.
+It also provides functions to convert the monochrome data to RGB565 format and to create a FrameBuffer bitmap from the byte data.
+"""
+
 import framebuf
 
 
@@ -383,83 +388,3 @@ bitmaps_dark = {
     '9': monochrome_to_rgb565(byte_data_9, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character '9'
     ':': monochrome_to_rgb565(byte_data_colon, 17, 24, TEXT_COLOR_DARK),  # Width and height of the character ':'
 }  
-
-# # Define the bitmaps for each character
-# bitmaps = {
-#     '0': [
-#         [1, 1, 1],
-#         [1, 0, 1],
-#         [1, 1, 1]
-#     ],
-#     '1': [
-#         [0, 1, 0],
-#         [0, 1, 0],
-#         [0, 1, 0]
-#     ],
-#     '2': [
-#         [1, 1, 1],
-#         [0, 1, 1],
-#         [1, 1, 0]
-#     ],
-#     '3': [
-#         [1, 1, 1],
-#         [0, 1, 1],
-#         [0, 1, 1]
-#     ],
-#     '4': [
-#         [1, 0, 1],
-#         [1, 1, 1],
-#         [0, 0, 1]
-#     ],
-#     '5': [
-#         [1, 1, 1],
-#         [1, 1, 0],
-#         [0, 1, 1]
-#     ],
-#     '6': [
-#         [1, 1, 1],
-#         [1, 1, 0],
-#         [1, 1, 1]
-#     ],
-#     '7': [
-#         [1, 1, 1],
-#         [0, 0, 1],
-#         [0, 0, 1]
-#     ],
-#     '8': [
-#         [1, 1, 1],
-#         [1, 1, 1],
-#         [1, 1, 1]
-#     ],
-#     '9': [
-#         [1, 1, 1],
-#         [1, 1, 1],
-#         [0, 0, 1]
-#     ],
-#     ' ': [
-#         [0, 0, 0],
-#         [0, 0, 0],
-#         [0, 0, 0]
-#     ],
-#     # Add bitmaps for '2' through '9' here...
-#     ':': [
-#         [0, 1, 0],
-#         [0, 0, 0],
-#         [0, 1, 0]
-#     ]
-# }
-
-
-
-# def draw_char(x, y, char, color):
-#     bitmap = bitmaps[char]
-#     for i, row in enumerate(bitmap):
-#         for j, pixel in enumerate(row):
-#             if pixel:
-#                 lcd.pixel(x + j, y + i, color)
-
-# def draw_string(x, y, string, color):
-#     for i, char in enumerate(string):
-#         draw_char(x + i * 4, y, char, color)  # 4 is the character width including space
-
-# draw_string(10, 10, '12:34', lcd.WHITE)
