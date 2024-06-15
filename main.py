@@ -4,9 +4,12 @@ It contains functions for drawing characters and strings on the LCD framebuffer,
 The main function initializes the display, shows a splash screen, and switches between stopwatch and sleep modes based on button presses.
 """
 import time
-from machine import Pin, PWM, idle
+from machine import Pin, PWM, idle, WDT
 from PicoLcd144 import LCD_1inch44
 from customFont import bitmaps, bitmaps_dark
+
+# Initialize the watchdog timer
+wdt = WDT(timeout=8000)  # 8 seconds
 
 # Define the SPI pins
 BL = 13
@@ -74,6 +77,8 @@ def sleepMode():
   pwm.duty_u16(0)#max 65535
 
   while awake_flag is False:
+    # Reset the watchdog timer
+    wdt.feed()
     idle()
 
   print("done sleeping")
@@ -153,6 +158,8 @@ def stopwatchMode():
   # Main loop
   while minutes < 1:
   # while seconds < 10:
+      # Reset the watchdog timer
+      wdt.feed()
 
       # Check for button presses
       if key0.value() == 0:
@@ -210,6 +217,7 @@ def stopwatchMode():
       time.sleep(0.1)  # Update the display every 100 milliseconds
 
 if __name__=='__main__':
+
   # Turn on the backlight
   pwm = PWM(Pin(BL))
   pwm.freq(1000)
@@ -225,3 +233,5 @@ if __name__=='__main__':
 
     print("Main: Switching to sleep mode")
     sleepMode()
+
+  print("Main: Exiting program")
